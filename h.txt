@@ -1,0 +1,50 @@
+*** tooltip-cell-renderer.ts ***
+
+@Component({
+  selector: 'app-tooltip-cell-renderer',
+    template: `
+      <div class = "a" style = "color: white !important" container="body">Hover
+        <span class="b">{{cost.slice(0,5)}}
+        <button routerLink="details" (click)="btnClick()">
+            Details
+        </button>
+        </span>
+      </div>
+  `,
+  styleUrls: ['./tooltip-cell-renderer.component.css']
+})  
+  
+btnClick= () => {
+  this.api.postMap("id").subscribe((data:any)=>{
+      console.log(data);
+      this.router.navigateByUrl('details', { state: {id: this.id , data: data}});
+  });
+
+};
+
+
+
+
+*** Design.ts ***
+
+this.data = JSON.stringify(this.navigation.extras.state as {
+    data:any
+});
+
+*** Design.html ***
+
+{{data}}
+<button (click)="btnClick()">Go back</button>
+
+
+
+
+
+*** API.SERVICE.TS ***
+
+postMap(id: string) {
+    return this.http.post<any>("http://localhost:8080/dataTest", id)
+        .pipe(map((res:any)=>{
+            return res;
+        }))
+}
