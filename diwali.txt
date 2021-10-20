@@ -1,0 +1,12 @@
+LocalDate dateBefore = LocalDate.parse("2015-10-01");
+LocalDate dateAfter = LocalDate.parse("2015-12-17");
+
+int months = (int)ChronoUnit.MONTHS.between(dateBefore.withDayOfMonth(1),dateAfter.withDayOfMonth(1)) + 1;
+
+if (months > 3) {
+    System.out.println("Start:" + dateAfter.minusYears(1).withMonth(1).withDayOfMonth(1) + "  End: " + dateAfter.minusYears(1).withMonth(12).withDayOfMonth(31));
+} else if (months > 1 && months <= 3) {
+    System.out.println("Start:" + dateBefore.minusMonths(3).withDayOfMonth(1) + "  End: " + dateAfter.minusMonths(3).withDayOfMonth(dateAfter.minusMonths(3).getMonth().length(dateAfter.isLeapYear())));
+} else if (months == 1) {
+    System.out.println("Start:" + dateBefore.minusMonths(1).withDayOfMonth(1) + "  End: " + dateAfter.minusMonths(1).withDayOfMonth(dateAfter.minusMonths(1).getMonth().length(dateAfter.isLeapYear())));
+}
