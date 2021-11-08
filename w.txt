@@ -1,0 +1,116 @@
+// WORKER
+
+//WorkerController.java
+
+package com.mq.Worker.controller;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mq.Worker.WorkerApplication;
+import com.mq.Worker.model.Queue;
+import org.springframework.web.bind.annotation.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+@RestController
+@RequestMapping(WorkerApplication.envName)
+public class WorkerController {
+
+    @GetMapping("/get-all-environment-info")
+    public String getValues() throws IOException {
+        HttpURLConnection con = (HttpURLConnection) new URL("http://localhost:8080/get-all-environment-info").openConnection();
+        con.setRequestMethod("GET");
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        return content.toString();
+    }
+
+    @GetMapping("/get-current-environment-info")
+    public String getCurrEnv() throws IOException {
+        return new ObjectMapper().writeValueAsString(new Queue("queue1", "1115"));
+    }
+}
+
+
+
+
+
+
+
+
+// WorkerApplication.java
+
+package com.mq.Worker;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.io.IOException;
+
+@SpringBootApplication
+public class WorkerApplication {
+    public static final String envName = "mxdt01";
+	public static void main(String[] args) throws IOException { SpringApplication.run(WorkerApplication.class, args); }
+}
+
+
+
+
+
+
+// application.properties
+
+server.port=8081
+
+
+
+
+
+// pom.xml
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.13</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
+        
+        
+        
+        
+        
