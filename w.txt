@@ -111,6 +111,29 @@ server.port=8081
         </dependency>
         
         
+	
+	
+
+// Queue.java
+
+package com.mq.Server.model;
+
+import lombok.Data;
+
+@Data
+public class Queue {
+    private String queueName;
+    private String queueSize;
+    public Queue() {
+
+    }
+
+    public Queue(String a, String b) {
+        this.queueName = a;
+        this.queueSize = b;
+    }
+}
+
         
         
         
