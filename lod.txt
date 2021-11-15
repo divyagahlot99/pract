@@ -1,0 +1,107 @@
+// app.service.ts
+
+isSidebarVisible: boolean | undefined = false;
+
+sidebarVisibilityChange: Subject<boolean> = new Subject<boolean>();
+
+constructor(private http: HttpClient)  {
+    this.sidebarVisibilityChange.subscribe((value) => {
+        this.isSidebarVisible = value
+    });
+}
+
+toggleSidebarVisibility() {
+    console.log("hii toggle")
+    this.sidebarVisibilityChange.next(!this.isSidebarVisible);
+}
+
+
+
+
+
+
+
+// tooltip-cell-renderer.ts
+
+loading = false;
+constructor(private router: Router, private api: ApiService) {}
+
+get isSidebarVisible(): boolean {
+    return <boolean>this.api.isSidebarVisible;
+}
+
+toggleSidebar() {
+    this.api.toggleSidebarVisibility()
+}
+
+
+
+
+
+
+
+// app.component.ts
+
+asideVisible: boolean | undefined;
+
+constructor(private api: ApiService, private router: Router) {
+    this.rowSelection = 'multiple';
+    this.asideVisible = api.isSidebarVisible;
+
+}
+get isSidebarVisible(): boolean {
+    return <boolean>this.api.isSidebarVisible;
+}
+
+
+
+
+
+// app.component.html
+
+<div class="row" >
+    <div class="col-lg-12 col-xl-12">
+        <div class="card shadow mb-4 bg-dark">
+            <div class="container">
+                <router-outlet></router-outlet>
+                <div class="loading-overlay" *ngIf="isSidebarVisible" style = "width: 2000px; height: 4000px; color: white; margin-top: 480px; margin-left: 600px;">
+                    <h1>{{loadingText}}</h1>
+                </div>
+                <div *ngIf="!isSidebarVisible">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="text-primary font-weight-bold h3 m-0">
+                            All Requests
+                        </h3>
+                    </div>
+                    <button (click)="postGetLoader()" style = "width: 100px; height: 50px;">Test Loader</button>
+
+
+                    <div class="card-body">
+                        <div class="container" style = "height: 2000px;">
+                            <button (click)="getSelectedRowData()">Get Selected Nodes</button>
+                            <div class="table-responsive-lg">
+                                <ag-grid-angular style="width: 100%; height: 500px" class="ag-theme-alpine-dark"
+                                    [rowData]="rowData" [columnDefs]="columnDefs" [frameworkComponents]="frameworkComponents"
+                                                 [gridOptions] = "gridOptions"
+                                    (gridReady)="onGridReady($event)" [defaultColDef]="defaultColDef" [singleClickEdit]="true"
+                                    (cellValueChanged)="onCellValueChanged($event)" [rowSelection]="rowSelection" (firstDataRendered)="onFirstDataRendered($event)" [tooltipShowDelay]="tooltipShowDelay"
+                                                 (rowSelected)="onRowSelected($event)"
+                                                 [suppressRowClickSelection] = "true">
+                                </ag-grid-angular>
+                            </div>
+                            <div class="table-responsive-lg">
+                                <ag-grid-angular style="width: 100%; height: 500px" class="ag-theme-alpine-dark"
+                                                 [rowData]="rowData1" [columnDefs]="columnDefs2" (gridReady)="onGridReady($event)">
+                                </ag-grid-angular>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<app-tooltip-cell-renderer *ngIf = "true" (currState)="getOutputValue($event)">
+</app-tooltip-cell-renderer>
+<app-new-page *ngIf = "true" (currState)="getOutputValue($event)">
+</app-new-page>
