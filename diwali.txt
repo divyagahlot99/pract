@@ -8,5 +8,6 @@ if (months > 3) {
 } else if (months > 1 && months <= 3) {
     System.out.println("Start:" + dateBefore.minusMonths(3).withDayOfMonth(1) + "  End: " + dateAfter.minusMonths(3).withDayOfMonth(dateAfter.minusMonths(3).getMonth().length(dateAfter.isLeapYear())));
 } else if (months == 1) {
+    System.out.println("Test");
     System.out.println("Start:" + dateBefore.minusMonths(1).withDayOfMonth(1) + "  End: " + dateAfter.minusMonths(1).withDayOfMonth(dateAfter.minusMonths(1).getMonth().length(dateAfter.isLeapYear())));
 }
