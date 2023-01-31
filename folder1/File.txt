@@ -1,0 +1,133 @@
+// ServerController.java
+// Hello
+
+package com.mq.Server.controller;
+
+import com.mq.Server.util.Helper;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+public class ServerController {
+
+    @GetMapping("/get-all-environment-info")
+    public String getValues() throws IOException {
+        // Call all 4
+        int i = 1;
+        StringBuffer content = new StringBuffer();
+        HashMap<String, String> props = Helper.getConfigMap();
+        for (Map.Entry<String,String> entry : props.entrySet()) {
+            HttpURLConnection con = (HttpURLConnection) new URL("http://localhost:808" + entry.getKey().charAt(4) + "/" +
+                    entry.getValue() + "/get-current-environment-info").openConnection();
+            con.setRequestMethod("GET");
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            i += 1;
+        }
+        return content.toString();
+    }
+
+}
+
+
+
+
+
+
+// config.properties
+
+HOST1=mxdt01
+HOST2=mxdt02
+HOST3=mxdt03
+
+
+
+
+// Queue.java
+
+package com.mq.Server.model;
+
+import lombok.Data;
+
+@Data
+public class Queue {
+    private String queueName;
+    private String queueSize;
+    public Queue() {
+
+    }
+
+    public Queue(String a, String b) {
+        this.queueName = a;
+        this.queueSize = b;
+    }
+}
+
+
+
+
+
+// Helper.java
+
+package com.mq.Server.util;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Properties;
+
+public class Helper {
+    public static HashMap<String, String>getConfigMap() throws IOException {
+        HashMap<String, String> props = new HashMap<>();
+        Properties prop = new Properties();
+        FileInputStream ip = new FileInputStream(System.getProperty("user.dir") + "/src/main/java/com/mq/Server/config/config.properties");
+        prop.load(ip);
+        Enumeration<String> enums = (Enumeration<String>) prop.propertyNames();
+        while (enums.hasMoreElements()) {
+            String key = enums.nextElement();
+            String value = prop.getProperty(key);
+            props.put(key, value);
+        }
+        return props;
+    }
+}
+
+
+
+
+
+
+// ServerApplication.java
+
+package com.mq.Server;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.io.IOException;
+
+@SpringBootApplication
+public class ServerApplication {
+
+	public static void main(String[] args) throws IOException {
+		SpringApplication.run(ServerApplication.class, args);
+	}
+
+}
+
+
+
+
+// application.properties
+
+server.port=8080
